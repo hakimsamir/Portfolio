@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hakim Samir — Network Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #12161d;
+    --surface: #1a212b;
+    --surface-hi: #212a35;
+    --line: #2b3542;
+    --text: #eceff2;
+    --text-dim: #8a94a3;
+    --accent: #e3a548;
+    --accent-dim: #7a5f34;
+    --wire: #4fa9a3;
+    --radius: 3px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent-dim); color:var(--text); }
+  a{ color:inherit; }
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+  .wrap{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+  h1,h2,h3{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(18,22,29,0.88);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  nav .wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    height:64px;
+  }
+  .brand{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700; font-size:1.05rem;
+    display:flex; align-items:center; gap:8px;
+  }
+  .brand .dot{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 0 3px rgba(227,165,72,0.15);
+  }
+  nav ul{
+    list-style:none; display:flex; gap:26px;
+  }
+  nav a{
+    text-decoration:none; color:var(--text-dim);
+    font-size:0.9rem; transition:color .15s ease;
+  }
+  nav a:hover{ color:var(--text); }
+  @media (max-width:760px){
+    nav ul{ display:none; }
+  }
+
+  /* ---------- HERO ---------- */
+  header.hero{
+    padding:88px 0 76px;
+    border-bottom:1px solid var(--line);
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:280px 1fr;
+    gap:56px;
+    align-items:center;
+  }
+  @media (max-width:800px){
+    .hero-grid{ grid-template-columns:1fr; }
+  }
+  .photo-frame{
+    position:relative;
+    width:100%;
+    max-width:260px;
+    aspect-ratio:1/1;
+    border-radius:6px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    background:var(--surface);
+    opacity:0;
+    animation:pop .6s ease forwards;
+  }
+  .photo-frame img{
+    width:100%; height:100%; object-fit:cover;
+    filter:grayscale(15%) contrast(1.03);
+  }
+  .photo-frame::before,
+  .photo-frame::after{
+    content:'';
+    position:absolute;
+    width:16px; height:16px;
+    border-color:var(--accent);
+    z-index:2;
+  }
+  .photo-frame::before{
+    top:8px; left:8px;
+    border-top:2px solid var(--accent);
+    border-left:2px solid var(--accent);
+  }
+  .photo-frame::after{
+    bottom:8px; right:8px;
+    border-bottom:2px solid var(--accent);
+    border-right:2px solid var(--accent);
+  }
+  .status-pill{
+    margin-top:16px;
+    display:inline-flex; align-items:center; gap:7px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.75rem;
+    color:var(--wire);
+  }
+  .status-pill::before{
+    content:''; width:6px; height:6px; border-radius:50%;
+    background:var(--wire);
+  }
+  .eyebrow-loc{
+    font-size:0.85rem;
+    color:var(--wire);
+    margin-bottom:18px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow-loc::before{
+    content:'';
+    width:6px; height:6px; border-radius:50%;
+    background:var(--wire);
+    display:inline-block;
+  }
+  h1.headline{
+    font-size:clamp(2.1rem, 4vw, 3.1rem);
+    line-height:1.1;
+    color:var(--text);
+    max-width:16ch;
+  }
+  .headline .accent-word{ color:var(--accent); }
+  .subhead{
+    margin-top:20px;
+    font-size:1.05rem;
+    color:var(--text-dim);
+    max-width:52ch;
+  }
+  .cta-row{
+    display:flex; gap:14px; margin-top:30px; flex-wrap:wrap;
+  }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:12px 22px;
+    border-radius:var(--radius);
+    font-size:0.95rem;
+    text-decoration:none;
+    font-weight:500;
+    transition:all .15s ease;
+    border:1px solid transparent;
+  }
+  .btn-primary{
+    background:var(--accent);
+    color:#161a10;
+  }
+  .btn-primary:hover{ background:#f0b862; }
+  .btn-ghost{
+    border-color:var(--line);
+    color:var(--text);
+  }
+  .btn-ghost:hover{ border-color:var(--text-dim); }
+  .contact-inline{
+    display:flex; flex-wrap:wrap; gap:16px;
+    margin-top:26px;
+  }
+  .contact-inline span{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.82rem;
+    color:var(--text-dim);
+  }
+
+  @keyframes pop{ to{ opacity:1; } }
+  @media (prefers-reduced-motion: reduce){
+    .photo-frame{ animation:none; opacity:1; }
+  }
+
+  /* ---------- SECTION SHELL ---------- */
+  section{ padding:72px 0; border-bottom:1px solid var(--line); }
+  .section-head{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin-bottom:38px; gap:20px; flex-wrap:wrap;
+  }
+  .section-head h2{ font-size:1.55rem; }
+  .section-index{
+    font-family:'IBM Plex Mono', monospace;
+    color:var(--text-dim);
+    font-size:0.85rem;
+  }
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{
+    display:grid; grid-template-columns:2fr 1fr; gap:56px;
+  }
+  @media (max-width:800px){ .about-grid{ grid-template-columns:1fr; } }
+  .about-grid p{ color:var(--text-dim); max-width:60ch; margin-bottom:16px; }
+  .about-grid p strong{ color:var(--text); font-weight:500; }
+  .stat-list{ display:flex; flex-direction:column; gap:20px; }
+  .stat{ border-left:2px solid var(--accent); padding-left:16px; }
+  .stat .num{ font-family:'Space Grotesk', sans-serif; font-size:1.5rem; font-weight:600; }
+  .stat .label{ color:var(--text-dim); font-size:0.86rem; }
+
+  /* ---------- SKILLS ---------- */
+  .skill-blocks{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  @media (max-width:800px){ .skill-blocks{ grid-template-columns:1fr; } }
+  .skill-block{
+    background:var(--bg);
+    padding:26px 24px;
+  }
+  .skill-block h3{
+    font-size:0.95rem; color:var(--wire);
+    margin-bottom:14px;
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:500;
+  }
+  .chip-row{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    background:var(--surface);
+    border:1px solid var(--line);
+    padding:5px 10px;
+    border-radius:var(--radius);
+    color:var(--text);
+  }
+  .soft-lang-row{
+    display:grid; grid-template-columns:2fr 1fr; gap:1px;
+    background:var(--line); border:1px solid var(--line); border-top:none;
+  }
+  @media (max-width:800px){ .soft-lang-row{ grid-template-columns:1fr; } }
+  .soft-lang-row .skill-block{ padding:22px 24px; }
+  .lang-list{ display:flex; flex-direction:column; gap:8px; }
+  .lang-list div{ display:flex; justify-content:space-between; font-size:0.9rem; }
+  .lang-list span.level{ color:var(--text-dim); font-family:'IBM Plex Mono', monospace; font-size:0.8rem; }
+
+  /* ---------- CERTS ---------- */
+  .cert-row{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+  @media (max-width:700px){ .cert-row{ grid-template-columns:1fr; } }
+  .cert-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px 22px;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    gap:16px;
+  }
+  .cert-card h3{ font-size:0.98rem; margin-bottom:5px; line-height:1.35; }
+  .cert-card .issuer{ color:var(--text-dim); font-size:0.85rem; }
+  .cert-date{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:var(--accent);
+    border:1px solid var(--accent-dim);
+    padding:4px 8px;
+    border-radius:var(--radius);
+    white-space:nowrap;
+  }
+
+  /* ---------- PROJECT ---------- */
+  .project-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .project-top{
+    padding:32px 32px 0;
+  }
+  .project-top .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.75rem;
+    color:var(--wire);
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+  }
+  .project-top h3{ font-size:1.4rem; margin:10px 0 14px; }
+  .project-top p{ color:var(--text-dim); max-width:64ch; margin-bottom:10px; }
+  .project-list{
+    color:var(--text-dim); max-width:64ch; margin:14px 0 24px 20px;
+    font-size:0.95rem;
+  }
+  .project-list li{ margin-bottom:6px; }
+  .project-meta{
+    display:flex; flex-wrap:wrap; gap:10px;
+    padding:0 32px 32px;
+  }
+
+  /* ---------- TIMELINE (experience + education) ---------- */
+  .timeline{ position:relative; padding-left:28px; }
+  .timeline::before{
+    content:'';
+    position:absolute; left:5px; top:6px; bottom:6px;
+    width:1px; background:var(--line);
+  }
+  .t-item{ position:relative; padding-bottom:38px; }
+  .t-item:last-child{ padding-bottom:0; }
+  .t-item::before{
+    content:'';
+    position:absolute; left:-28px; top:4px;
+    width:11px; height:11px; border-radius:50%;
+    background:var(--bg); border:2px solid var(--accent);
+  }
+  .t-item .t-date{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.8rem; color:var(--text-dim);
+    margin-bottom:4px;
+  }
+  .t-item h3{ font-size:1.05rem; margin-bottom:2px; }
+  .t-item .t-org{ color:var(--wire); font-size:0.9rem; margin-bottom:10px; }
+  .t-item ul{ color:var(--text-dim); max-width:60ch; font-size:0.93rem; padding-left:18px; }
+  .t-item li{ margin-bottom:5px; }
+  .t-item p{ color:var(--text-dim); max-width:60ch; font-size:0.93rem; }
+
+  /* ---------- TRAINING LIST ---------- */
+  .training-list{
+    display:flex; flex-direction:column; gap:1px;
+    background:var(--line); border:1px solid var(--line); margin-top:36px;
+  }
+  .training-item{
+    background:var(--bg);
+    padding:16px 20px;
+    display:flex; justify-content:space-between; align-items:baseline;
+    gap:16px; flex-wrap:wrap;
+  }
+  .training-item .t-name{ font-size:0.95rem; }
+  .training-item .t-when{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem; color:var(--text-dim);
+    white-space:nowrap;
+  }
+  .subhead-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.85rem; color:var(--wire); margin-top:44px; margin-bottom:14px;
+  }
+
+  /* ---------- CONTACT ---------- */
+  footer{ padding:72px 0 56px; }
+  .contact-grid{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    flex-wrap:wrap; gap:32px;
+  }
+  footer h2{ font-size:1.7rem; max-width:16ch; }
+  .contact-links{ display:flex; flex-direction:column; gap:10px; }
+  .contact-links a{
+    text-decoration:none; color:var(--text-dim);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.9rem;
+    transition:color .15s ease;
+  }
+  .contact-links a:hover{ color:var(--accent); }
+  .foot-note{
+    margin-top:52px; color:var(--text-dim); font-size:0.8rem;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span>Hakim Samir</div>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#certs">Certifications</a></li>
+      <li><a href="#project">Project</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="photo-frame">
+        <img src="photo.jpeg" alt="Hakim Samir">
+      </div>
+      <div class="status-pill">Open to work</div>
+    </div>
+    <div>
+      <div class="eyebrow-loc">Cairo, Egypt</div>
+      <h1 class="headline">Network engineer with a <span class="accent-word">Technical Support</span> foundation.</h1>
+      <p class="subhead">Network Engineer with hands-on experience as an IT Technical Support, backed by strong 
+academic and practical training through university studies and professional programs at the 
+National Telecommunication Institute (NTI) and the Digital Egypt Pioneers Initiative (DEPI), 
+Seeking an entry-level role to leverage technical skills, optimize network performance, and 
+contribute to building secure and efficient IT infrastructure. </p>
+
+
+    </div>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap about-grid">
+    <div>
+      <div class="section-head" style="border:none; margin-bottom:24px;">
+        <h2>About</h2>
+        <span class="section-index mono">01</span>
+      </div>
+      <p>I'm a <strong>Network Engineer</strong> currently working in IT technical support at Nissan Xpress Egypt, where I split my time between end-user support and hands-on router, switch, and access-point configuration.</p>
+      <p>My path started with a <strong>B.Sc. in Computers and Artificial Intelligence</strong> from Benha University, majoring in Information Security and Digital Forensics, backed by hands-on training through the <strong>National Telecommunication Institute (NTI)</strong> and the <strong>Digital Egypt Pioneers Initiative (DEPI)</strong>.</p>
+      <p>My graduation project — a <strong>signature-based Network Intrusion Detection System</strong> — earned an A+ and shaped my interest in the defensive side of networking. I'm looking for an entry-level role where I can grow into building secure, efficient IT infrastructure.</p>
+    </div>
+    <div class="stat-list">
+      <div class="stat">
+        <div class="num">3.28 / 4.00</div>
+        <div class="label">Cumulative GPA, Benha University</div>
+      </div>
+      <div class="stat">
+        <div class="num">A+</div>
+        <div class="label">Graduation project — Signature-based NIDS</div>
+      </div>
+      <div class="stat">
+        <div class="num">100+</div>
+        <div class="label">End-users supported at Nissan Xpress Egypt</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Skills</h2>
+      <span class="section-index mono">02</span>
+    </div>
+    <div class="skill-blocks">
+      <div class="skill-block">
+        <h3>networking</h3>
+        <div class="chip-row">
+          <span class="chip">TCP/IP</span>
+          <span class="chip">VLANs</span>
+          <span class="chip">DHCP</span>
+          <span class="chip">DNS</span>
+          <span class="chip">Routing & Switching</span>
+        </div>
+      </div>
+      <div class="skill-block">
+        <h3>security</h3>
+        <div class="chip-row">
+          <span class="chip">Network Security</span>
+          <span class="chip">Cybersecurity Fundamentals</span>
+          <span class="chip">Wireshark</span>
+        </div>
+      </div>
+      <div class="skill-block">
+        <h3>tools & platforms</h3>
+        <div class="chip-row">
+          <span class="chip">Cisco Packet Tracer</span>
+          <span class="chip">VMware Workstation</span>
+          <span class="chip">Visual Studio</span>
+          <span class="chip">Windows</span>
+          <span class="chip">Linux / Ubuntu</span>
+        </div>
+      </div>
+    </div>
+    <div class="soft-lang-row">
+      <div class="skill-block">
+        <h3>programming & web</h3>
+        <div class="chip-row">
+          <span class="chip">Python</span>
+          <span class="chip">JavaScript</span>
+          <span class="chip">HTML5</span>
+          <span class="chip">CSS3</span>
+          <span class="chip">Bootstrap 5</span>
+        </div>
+      </div>
+      <div class="skill-block">
+        <h3>languages</h3>
+        <div class="lang-list">
+          <div>Arabic <span class="level">Native</span></div>
+          <div>English <span class="level">Very Good</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="certs">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Certifications</h2>
+      <span class="section-index mono">03</span>
+    </div>
+    <div class="cert-row">
+      <div class="cert-card">
+        <div><h3>CompTIA Security+</h3><div class="issuer">CompTIA</div></div>
+        <span class="cert-date">Apr 2026</span>
+      </div>
+      <div class="cert-card">
+        <div><h3>CCNAv7: Switching & Routing, Enterprise Networking</h3><div class="issuer">Cisco</div></div>
+        <span class="cert-date">Apr 2024</span>
+      </div>
+      <div class="cert-card">
+        <div><h3>Network Security</h3><div class="issuer">Cisco</div></div>
+        <span class="cert-date">Apr 2024</span>
+      </div>
+      <div class="cert-card">
+        <div><h3>Cybersecurity for Beginners</h3><div class="issuer">Mahara-Tech ITI</div></div>
+        <span class="cert-date">Dec 2023</span>
+      </div>
+      <div class="cert-card">
+        <div><h3>Front-End Diploma</h3><div class="issuer">Route IT</div></div>
+        <span class="cert-date">Dec 2022</span>
+      </div>
+      <div class="cert-card">
+        <div><h3>CCNAv7: Introduction to Networks</h3><div class="issuer">Cisco</div></div>
+        <span class="cert-date">Oct 2022</span>
+      </div>
+      <div class="cert-card">
+        <div><h3>CyberOps Associate</h3><div class="issuer">NTI</div></div>
+        <span class="cert-date">Aug 2022</span>
+      </div>
+      <div class="cert-card">
+        <div><h3>Cybersecurity Training</h3><div class="issuer">NTI</div></div>
+        <span class="cert-date">Aug 2022</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="project">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Featured project</h2>
+      <span class="section-index mono">04</span>
+    </div>
+    <div class="project-card">
+      <div class="project-top">
+        <span class="tag">Graduation project — grade A+</span>
+        <h3>Signature-Based Network Intrusion Detection System</h3>
+        <p>Built a signature-based NIDS in Python that monitors and analyzes network traffic to detect malicious patterns, paired with a website that surfaces known threats to improve visibility and response.</p>
+        <ul class="project-list">
+          <li>Monitored and analyzed live network traffic to detect known attack signatures.</li>
+          <li>Designed a companion website to display detected threats and improve visibility.</li>
+          <li>Implemented automated incident reporting to speed up response time.</li>
+        </ul>
+      </div>
+      <div class="project-meta">
+        <span class="chip">Python</span>
+        <span class="chip">Ubuntu</span>
+        <span class="chip">Kali Linux</span>
+        <span class="chip">MySQL</span>
+        <span class="chip">XAMPP</span>
+        <span class="chip">PHP</span>
+        <span class="chip">Laravel</span>
+        <span class="chip">HTML5 / CSS3 / JS</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Experience & education</h2>
+      <span class="section-index mono">05</span>
+    </div>
+    <div class="timeline">
+      <div class="t-item">
+        <div class="t-date">Jun 2026 — Present</div>
+        <h3>IT Technical Support</h3>
+        <div class="t-org">Nissan Xpress Egypt</div>
+        <ul>
+          <li>Support 100+ end-users on-site and remotely via AnyDesk and TeamViewer.</li>
+          <li>Resolve hardware, software, and OS issues across desktops, laptops, printers, and IP phones.</li>
+          <li>Configure and troubleshoot routers, switches, and wireless access points for stable network performance.</li>
+          <li>Install and configure software and Windows OS, and set up new user devices.</li>
+          <li>Manage CCTV systems — IP cameras, NVR/DVR, and storage allocation — ensuring uptime and data retention.</li>
+        </ul>
+      </div>
+      <div class="t-item">
+        <div class="t-date">Jul 2026 — Present</div>
+        <h3>Cyber Security Incident Response Analyst — Training</h3>
+        <div class="t-org">Digital Egypt Pioneers Initiative (DEPI), under MCIT</div>
+        <p>Six-month program focused on incident response under the Ministry of Communications and Information Technology.</p>
+      </div>
+      <div class="t-item">
+        <div class="t-date">Sep 2020 — May 2024</div>
+        <h3>B.Sc. in Computers and Artificial Intelligence</h3>
+        <div class="t-org">Benha University — Information Security and Digital Forensics</div>
+        <p>Cumulative GPA 3.28/4.00 (Very Good). Graduation project: Signature-Based NIDS, grade A+.</p>
+      </div>
+    </div>
+
+    <div class="subhead-label">Summer training & short courses</div>
+    <div class="training-list">
+      <div class="training-item">
+        <span class="t-name">HCIA-Security — Huawei Network Academy</span>
+        <span class="t-when">Jul – Sep 2023</span>
+      </div>
+      <div class="training-item">
+        <span class="t-name">Front-End Web Development Diploma — Route IT Training Center</span>
+        <span class="t-when">Jul – Dec 2022</span>
+      </div>
+      <div class="training-item">
+        <span class="t-name">HCIA-Routing & Switching — Huawei Network Academy</span>
+        <span class="t-when">Jul – Sep 2022</span>
+      </div>
+      <div class="training-item">
+        <span class="t-name">Cisco Cybersecurity — NTI</span>
+        <span class="t-when">Jul – Aug 2022</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="contact-grid">
+      <h2>Let's talk about a role, or just about networks.</h2>
+      <div class="contact-links">
+        <a href="mailto:hakimsamir2002@gmail.com">hakimsamir2002@gmail.com</a>
+        <a href="tel:+201031445305">+20 103 144 5305</a>
+         <a href="https://www.linkedin.com/in/hakim-samir">linkedin</a>
+        
+      </div>
+    </div>
+    <div class="foot-note">
+      <span>Cairo, Egypt</span>
+      <span>Open to network engineering & cybersecurity roles</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
